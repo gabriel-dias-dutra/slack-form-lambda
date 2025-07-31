@@ -1,0 +1,71 @@
+{
+  "display_information": {
+    "name": "Form Processor",
+    "description": "Process forms and send to n8n",
+    "background_color": "#4B9ED6"
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "Form Processor",
+      "always_online": true
+    },
+    "shortcuts": [
+      {
+        "name": "Abrir Formulário",
+        "type": "global",
+        "callback_id": "abrir_form",
+        "description": "Abre o formulário de cadastro"
+      }
+    ]
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "chat:write",
+        "im:write",
+        "commands"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "https://your-domain.com/slack/events",
+      "bot_events": []
+    },
+    "interactivity": {
+      "is_enabled": true,
+      "request_url": "https://your-domain.com/slack/events"
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false,
+    "function_runtime": "remote"
+  },
+  "functions": {
+    "create_user": {
+      "title": "Create User",
+      "description": "Creates a new user from workflow form data",
+      "input_parameters": {
+        "properties": {},
+        "required": []
+      },
+      "output_parameters": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the user was successfully created"
+          },
+          "message": {
+            "type": "string",
+            "description": "Status message"
+          },
+          "data": {
+            "type": "string",
+            "description": "JSON string of the created data"
+          }
+        },
+        "required": ["success", "message"]
+      }
+    }
+  }
+}

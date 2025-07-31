@@ -1,11 +1,22 @@
 {
-  "name": "slack-form-lambda",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "@slack/bolt": "^4.4.0",
-    "axios": "^1.11.0",
-    "dotenv": "^17.2.1"
-  }
+    "name": "slack-form-lambda",
+    "version": "1.0.0",
+    "main": "dist/main.js",
+    "license": "MIT",
+    "scripts": {
+        "build": "swc src/main.ts -o dist/main.js",
+        "dev": "swc src/local.ts -o dist/local.js && node dist/local.js",
+        "dev:lambda": "swc src/main.ts -o dist/main.js && node dist/main.js",
+        "start": "node dist/main.js"
+    },
+    "dependencies": {
+        "@slack/bolt": "^4.4.0",
+        "axios": "^1.11.0",
+        "dotenv": "^17.2.1"
+    },
+    "devDependencies": {
+        "@swc/cli": "^0.7.8",
+        "@swc/core": "^1.13.3",
+        "@types/node": "^24.1.0"
+    }
 }
