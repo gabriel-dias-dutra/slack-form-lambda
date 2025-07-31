@@ -1,0 +1,11 @@
+{
+  "name": "slack-form-lambda",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/bolt": "^4.4.0",
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1"
+  }
+}
