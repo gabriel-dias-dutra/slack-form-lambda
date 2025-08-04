@@ -1,0 +1,90 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.1.3/schema.json",
+    "formatter": {
+        "enabled": true,
+        "formatWithErrors": false,
+        "indentStyle": "space",
+        "indentWidth": 2,
+        "lineEnding": "lf",
+        "lineWidth": 80,
+        "attributePosition": "auto"
+    },
+    "files": {},
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": false,
+            "complexity": {
+                "noUselessTypeConstraint": "off"
+            },
+            "correctness": {
+                "noUnusedVariables": {
+                    "level": "error",
+                    "fix": "safe"
+                },
+                "noUnusedImports": {
+                    "level": "error",
+                    "fix": "safe"
+                }
+            },
+            "style": {
+                "noNamespace": "off",
+                "useAsConstAssertion": "error",
+                "useBlockStatements": "off"
+            },
+            "suspicious": {
+                "noExplicitAny": "off",
+                "noExtraNonNullAssertion": "error",
+                "noMisleadingInstantiator": "error",
+                "noUnsafeDeclarationMerging": "error",
+                "useNamespaceKeyword": "error"
+            }
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "jsxQuoteStyle": "double",
+            "quoteProperties": "asNeeded",
+            "trailingCommas": "all",
+            "semicolons": "always",
+            "arrowParentheses": "always",
+            "bracketSpacing": true,
+            "bracketSameLine": false,
+            "quoteStyle": "single",
+            "attributePosition": "auto"
+        },
+        "parser": {
+            "unsafeParameterDecoratorsEnabled": true
+        }
+    },
+    "overrides": [
+        {
+            "linter": {
+                "rules": {
+                    "correctness": {
+                        "noConstAssign": "off",
+                        "noGlobalObjectCalls": "off",
+                        "noInvalidConstructorSuper": "off",
+                        "noSetterReturn": "off",
+                        "noUndeclaredVariables": "off",
+                        "noUnreachable": "off",
+                        "noUnreachableSuper": "off"
+                    },
+                    "style": {
+                        "useConst": "error"
+                    },
+                    "suspicious": {
+                        "noDuplicateClassMembers": "off",
+                        "noDuplicateObjectKeys": "off",
+                        "noDuplicateParameters": "off",
+                        "noFunctionAssign": "off",
+                        "noImportAssign": "off",
+                        "noRedeclare": "off",
+                        "noUnsafeNegation": "off",
+                        "useGetterReturn": "off"
+                    }
+                }
+            }
+        }
+    ]
+}

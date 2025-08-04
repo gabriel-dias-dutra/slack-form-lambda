@@ -1,3 +1,11 @@
 .env
 node_modules/
 dist/
+*.zip
+.terraform
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+.terraform.lock.hcl
+layer/
+plan
