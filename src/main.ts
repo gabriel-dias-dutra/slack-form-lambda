@@ -16,7 +16,7 @@ const app = new App({
     receiver: awsLambdaReceiver,
 });
 
-app.function("createUser", async ({ inputs, complete, fail, logger }) => {
+app.function("createUser", async ({ inputs, complete, logger }) => {
     logger.info("Função createUser chamada com inputs:", inputs);
 
     try {
