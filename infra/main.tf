@@ -23,15 +23,15 @@ provider "aws" {
 
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_dir  = "${path.module}/dist"
-  output_path = "${path.module}/lambda_function.zip"
+  source_dir  = "${path.module}/../dist"
+  output_path = "${path.module}/../lambda_function.zip"
 }
 
 # Archive para o Layer com node_modules
 data "archive_file" "layer_zip" {
   type        = "zip"
-  source_dir  = "${path.module}/layer"
-  output_path = "${path.module}/nodejs_layer.zip"
+  source_dir  = "${path.module}/../layer"
+  output_path = "${path.module}/../nodejs_layer.zip"
 }
 
 resource "aws_iam_role" "lambda_role" {
@@ -71,8 +71,8 @@ resource "aws_lambda_function" "slack_form" {
   handler         = "main.handler"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   runtime           = "nodejs22.x"
-  timeout         = 10
-  memory_size     = 256
+  timeout         = 5
+  memory_size     = 128
   layers          = [aws_lambda_layer_version.nodejs_layer.arn]
 
   environment {
@@ -80,6 +80,7 @@ resource "aws_lambda_function" "slack_form" {
       SLACK_BOT_TOKEN     = var.slack_bot_token
       SLACK_SIGNING_SECRET = var.slack_signing_secret
       N8N_WEBHOOK_URL      = var.n8n_webhook_url
+      SLACK_WEBHOOK_URL    = var.slack_webhook_url
     }
   }
 
@@ -95,16 +96,16 @@ resource "aws_lambda_function_url" "slack_form_url" {
 
   cors {
     allow_credentials = true
-    allow_origins     = ["*"]
-    allow_methods     = ["*"]
+    allow_origins     = ["https://slack.com", "https://*.slack.com"]
+    allow_methods     = ["POST"]
     allow_headers     = ["date", "keep-alive"]
     expose_headers    = ["keep-alive", "date"]
-    max_age          = 86400
+    max_age           = 86400
   }
 }
 
 # CloudWatch Log Group com retenção mínima
 resource "aws_cloudwatch_log_group" "lambda_logs" {
   name              = "/aws/lambda/slack-form-lambda"
-  retention_in_days = 3  # Mínimo de retenção para economizar custos
+  retention_in_days = 1
 }

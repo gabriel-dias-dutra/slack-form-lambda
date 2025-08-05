@@ -24,3 +24,10 @@ variable "n8n_webhook_url" {
   sensitive   = false
   default     = ""
 }
+
+variable "slack_webhook_url" {
+  description = "Slack Webhook URL (pode ser definido via TF_VAR_slack_webhook_url)"
+  type        = string
+  sensitive   = false
+  default     = ""
+}

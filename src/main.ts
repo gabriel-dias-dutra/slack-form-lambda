@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const n8nURL = process.env.N8N_WEBHOOK_URL || "";
-
+const slackWebhookURL = process.env.SLACK_WEBHOOK_URL || "";
 const awsLambdaReceiver = new AwsLambdaReceiver({
     signingSecret: process.env.SLACK_SIGNING_SECRET || "",
 });
@@ -28,32 +28,29 @@ app.function("create_user", async ({ inputs, complete, fail, logger }) => {
             },
         };
 
+        await complete();
+
         await axios.post(n8nURL, formData, {
             headers: {
                 "Content-Type": "application/json",
             },
         });
 
-        logger.info("Dados enviados para n8n com sucesso:");
+        logger.info("Dados enviados para n8n com sucesso");
 
-        // Retorna sucesso para o Workflow Builder
-        await complete({
-            outputs: {
-                success: true,
-                message: "Usuário criado com sucesso",
-                data: JSON.stringify(formData),
-            },
+        await axios.post(slackWebhookURL, {
+            success: true,
         });
     } catch (error) {
         if (isAxiosError(error)) {
-            logger.error("Erro Axios:", error.response?.data.message);
+            logger.error("Erro Axios:", error.response?.data);
             await fail({
-                error: `Erro ao enviar dados para n8n: ${error.response?.data.message}`,
+                error: `Erro Axios: ${error.response?.data}`,
             });
         } else {
             logger.error("Erro ao processar função - Internal:", error);
             await fail({
-                error: `Erro ao enviar dados para n8n - Internal: ${error.message}`,
+                error: `Erro ao processar função - Internal: ${error.message}`,
             });
         }
     }
