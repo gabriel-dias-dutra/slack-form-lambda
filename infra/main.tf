@@ -96,7 +96,7 @@ resource "aws_lambda_function_url" "slack_form_url" {
 
   cors {
     allow_credentials = true
-    allow_origins     = ["https://slack.com", "https://*.slack.com"]
+    allow_origins     = ["https://slack.com"]
     allow_methods     = ["POST"]
     allow_headers     = ["date", "keep-alive"]
     expose_headers    = ["keep-alive", "date"]

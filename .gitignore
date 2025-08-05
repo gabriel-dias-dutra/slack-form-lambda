@@ -9,3 +9,4 @@ terraform.tfvars
 .terraform.lock.hcl
 layer/
 plan
+*.zip

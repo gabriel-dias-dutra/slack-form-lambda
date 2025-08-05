@@ -40,18 +40,17 @@ app.function("create_user", async ({ inputs, complete, fail, logger }) => {
 
         await axios.post(slackWebhookURL, {
             success: true,
+            error: null,
         });
     } catch (error) {
         if (isAxiosError(error)) {
             logger.error("Erro Axios:", error.response?.data);
-            await fail({
-                error: `Erro Axios: ${error.response?.data}`,
+            await axios.post(slackWebhookURL, {
+                success: false,
+                error: error.response?.data.message || "Erro ao processar função",
             });
         } else {
             logger.error("Erro ao processar função - Internal:", error);
-            await fail({
-                error: `Erro ao processar função - Internal: ${error.message}`,
-            });
         }
     }
 });

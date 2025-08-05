@@ -17,18 +17,18 @@ cp package.json layer/nodejs/
 cp yarn.lock layer/nodejs/
 
 # Entra no diretório e instala dependências de produção
-# cd layer/nodejs
-# yarn install --production
+cd layer/nodejs
+yarn install --production
 
-# # Remove arquivos desnecessários para reduzir tamanho
-# find . -name "*.md" -type f -delete
-# find . -name "*.txt" -type f -delete
-# find . -name ".git" -type d -exec rm -rf {} + 2>/dev/null
-# find . -name "test" -type d -exec rm -rf {} + 2>/dev/null
-# find . -name "tests" -type d -exec rm -rf {} + 2>/dev/null
-# find . -name "*.map" -type f -delete
+# Remove arquivos desnecessários para reduzir tamanho
+find . -name "*.md" -type f -delete
+find . -name "*.txt" -type f -delete
+find . -name ".git" -type d -exec rm -rf {} + 2>/dev/null
+find . -name "test" -type d -exec rm -rf {} + 2>/dev/null
+find . -name "tests" -type d -exec rm -rf {} + 2>/dev/null
+find . -name "*.map" -type f -delete
 
-# cd ..
+cd ..
 
-# echo "✅ Layer preparado em ./layer/"
-# echo "📦 Estrutura: layer/nodejs/node_modules/"
+echo "✅ Layer preparado em ./layer/"
+echo "📦 Estrutura: layer/nodejs/node_modules/"
