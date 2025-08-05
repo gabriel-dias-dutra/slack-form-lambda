@@ -1,4 +1,5 @@
 import { App, AwsLambdaReceiver } from "@slack/bolt";
+import type { AwsCallback, AwsEvent } from "@slack/bolt/dist/receivers/AwsLambdaReceiver";
 import axios, { isAxiosError } from "axios";
 import * as dotenv from "dotenv";
 
@@ -15,8 +16,8 @@ const app = new App({
     receiver: awsLambdaReceiver,
 });
 
-app.function("create_user", async ({ inputs, complete, fail, logger }) => {
-    logger.info("Função create_user chamada com inputs:", inputs);
+app.function("createUser", async ({ inputs, complete, fail, logger }) => {
+    logger.info("Função createUser chamada com inputs:", inputs);
 
     try {
         // Prepara os dados do formulário
@@ -24,23 +25,29 @@ app.function("create_user", async ({ inputs, complete, fail, logger }) => {
             timestamp: new Date().toISOString(),
             submittedBy: inputs.user_id || "workflow",
             formFields: {
-                ...inputs, // Todos os campos do workflow
+                firstName: inputs.firstName,
+                lastName: inputs.lastName,
             },
         };
 
         await complete();
 
-        await axios.post(n8nURL, formData, {
+        const n8nResponse = await axios.post(n8nURL, formData, {
             headers: {
                 "Content-Type": "application/json",
             },
         });
 
         logger.info("Dados enviados para n8n com sucesso");
+        logger.info("Dados recebidos do n8n:", n8nResponse.data);
 
         await axios.post(slackWebhookURL, {
             success: true,
             error: null,
+            firstName: n8nResponse.data.firstName,
+            lastName: n8nResponse.data.lastName,
+            email: n8nResponse.data.email,
+            password: n8nResponse.data.password,
         });
     } catch (error) {
         if (isAxiosError(error)) {
@@ -48,6 +55,8 @@ app.function("create_user", async ({ inputs, complete, fail, logger }) => {
             await axios.post(slackWebhookURL, {
                 success: false,
                 error: error.response?.data.message || "Erro ao processar função",
+                firstName: inputs.firstName,
+                lastName: inputs.lastName,
             });
         } else {
             logger.error("Erro ao processar função - Internal:", error);
@@ -56,7 +65,7 @@ app.function("create_user", async ({ inputs, complete, fail, logger }) => {
 });
 
 // Handler da Lambda
-export const handler = async (event, context, callback) => {
+export const handler = async (event: AwsEvent, context: any, callback: AwsCallback) => {
     const handler = await awsLambdaReceiver.start();
     return handler(event, context, callback);
 };

@@ -1,55 +1,91 @@
 # slack-form-lambda
 
-Lambda-based Slack app that receives form submissions from Workflow Builder and forwards them to an n8n webhook.
+Lambda-based Slack app que recebe formulários do Slack Workflow Builder e os envia para um webhook n8n, com resposta assíncrona via outro Slack Workflow.
+
+## O que é?
+
+Este projeto integra Slack Workflows com n8n através de uma AWS Lambda. Permite que formulários criados no Slack sejam processados pelo n8n e a resposta seja enviada de volta para o Slack de forma assíncrona.
+
+## Como funciona?
+
+### Fluxo Principal
+
+1. **Slack Workflow → Lambda**: Um Slack Workflow chama a Lambda com dados do formulário
+2. **Lambda → n8n**: A Lambda (código em `src/main.ts`) formata os dados e envia para o webhook n8n
+3. **Lambda → Slack**: Responde imediatamente com HTTP 200 para o Slack Workflow
+4. **n8n → Slack Webhook**: Após processar, o n8n envia o resultado via webhook para outro Slack Workflow
+5. **Slack Notificação**: O segundo workflow notifica o usuário/canal sobre sucesso ou erro
 
 ## Setup
 
-1. Create a Slack app at https://api.slack.com/apps
-2. Use the provided `slack-manifest.json` to configure your app
-3. Install the app to your workspace
-4. Copy `.env.example` to `.env` and fill in:
-   - `SLACK_BOT_TOKEN`: Bot User OAuth Token (xoxb-...)
-   - `SLACK_SIGNING_SECRET`: App signing secret
-   - `N8N_WEBHOOK_URL`: Your n8n webhook URL
+1. Crie um Slack app em <https://api.slack.com/apps>
+2. Use o `slack-manifest.json` para configurar o app
+3. Instale o app no seu workspace
+4. Configure o `.env`:
 
-## Lambda Deployment
+   ```bash
+   SLACK_BOT_TOKEN=xoxb-...
+   SLACK_SIGNING_SECRET=...
+   N8N_WEBHOOK_URL=https://seu-n8n.com/webhook/...
+   SLACK_WEBHOOK_URL=https://hooks.slack.com/triggers/...
+   ```
 
-Deploy the `dist/main.js` file to AWS Lambda with:
-- Runtime: Node.js 18.x or higher
-- Handler: `main.handler`
-- Environment variables from `.env`
+## Scripts Importantes
 
-## Local Development
+### `infra/terraform.sh`
+
+Script para gerenciar a infraestrutura com Terraform:
+
+- Carrega automaticamente as variáveis do `.env`
+- Executa build e prepara o layer antes de `plan` ou `apply`
+- Uso: `./terraform.sh plan` ou `./terraform.sh apply`
+
+### `prepare-layer.sh`
+
+Cria a Lambda Layer com as dependências de produção:
+
+- Gera a pasta `layer/nodejs/node_modules`
+- Remove arquivos desnecessários para reduzir tamanho
+- Executado automaticamente pelo `terraform.sh`
+
+## Deploy
+
+```bash
+# Instalar dependências e buildar
+yarn install
+
+# Deploy da infraestrutura (Lambda + Layer)
+cd infra
+./terraform.sh plan
+./terraform.sh apply
+```
+
+## Desenvolvimento Local
 
 ```bash
 yarn install
-yarn build
 ```
 
-## Workflow Builder Integration
+## Formato dos Dados
 
-1. In Workflow Builder, add the "Process Form Submission" function
-2. Map form fields to the function inputs
-3. The function will send all inputs to your n8n webhook
-
-## How it Works
-
-1. User submits a form in Slack Workflow Builder
-2. Workflow Builder calls the `process_form_submission` function
-3. The function receives all form inputs
-4. Data is formatted and sent to your n8n webhook
-5. n8n processes the data according to your workflow
-
-## Data Format
-
-The app sends the following JSON to n8n:
+### Enviado para n8n
 
 ```json
 {
-  "timestamp": "2024-01-01T12:00:00.000Z",
-  "submittedBy": "U123456789",
   "formFields": {
-    // All form fields from Workflow Builder
+    "firstName": "João",
+    "lastName": "Silva"
   }
+}
+```
+
+### Resposta do n8n para Slack
+
+```json
+{
+  "success": true,
+  "error": null,
+  "firstName": "João",
+  "lastName": "Silva"
 }
 ```
